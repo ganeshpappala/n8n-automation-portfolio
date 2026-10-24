@@ -90,13 +90,13 @@
           "parameters": [
             {
               "name": "x-api-key",
-              "value": "txb_PF4lSj6WprAn37qYwLIN5ki2ZJEy87lN"
+              "value": "//YourTexTBee API KEY Value"
             }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{\n  {\n    recipients: [\n      \"+919948613874\",\n      \"+918885511934\",\n      \"+919553515676\",\n    ],\n    deviceId: \"6acdc57474e21da91a318573\",\n    message: `Good morning!\n\nDaily Weather Report - ${$json.City}\n\nTemperature: ${$json.Temperature} °C\nFeels like: ${$json['Feels like']} °C\nHumidity: ${$json.Humidity}%\nWind Speed: ${$json['Wind Speed']} km/h\n\nHave a great day!`\n  }\n}}",
+        "jsonBody": "={{\n  {\n    recipients: [\n      \"+91ReceiverMobileNumber1\",\n      \"+91ReceiverMobileNumber2\",\n      \"+91ReceiverMobileNumber3\",\n    ],\n    deviceId: \"6acdc57474e21da91a318573\",\n    message: `Good morning!\n\nDaily Weather Report - ${$json.City}\n\nTemperature: ${$json.Temperature} °C\nFeels like: ${$json['Feels like']} °C\nHumidity: ${$json.Humidity}%\nWind Speed: ${$json['Wind Speed']} km/h\n\nHave a great day!`\n  }\n}}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
