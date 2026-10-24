@@ -1,0 +1,101 @@
+{
+  "name": "Outlook to Telegram Notification",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "output": "fields",
+        "fields": [
+          "ccRecipients",
+          "from",
+          "hasAttachments",
+          "importance",
+          "receivedDateTime",
+          "toRecipients",
+          "subject",
+          "bodyPreview"
+        ],
+        "filters": {
+          "foldersToInclude": [
+            "AQMkADAwATM3ZmYAZS00ZjBjLTU5ZDUtMDACLTAwCgAuAAADvbVy-ydXT0WDWmEviLStpwEADsRxvsjRIkmd2U26qmjlzAAAAgEMAAAA"
+          ]
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "63662876-5118-4144-9ec0-a5847dbcb411",
+      "name": "Microsoft Outlook Trigger",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "bF4PCvrnptx3aILU",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1020329167",
+        "text": "=From :  {{ $json.from.emailAddress.name }}\nTo : {{ $json.toRecipients[0].emailAddress.name }}\nSubject : {{ $json.subject }}\nBody : {{ $json.bodyPreview }}\nAttachments: {{ $json.hasAttachments }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        0
+      ],
+      "id": "ea299f54-9669-404c-a9da-81a2defe304d",
+      "name": "Send a text message",
+      "webhookId": "d35dbfa1-7c0f-4710-80e2-a457a9e74140",
+      "credentials": {
+        "telegramApi": {
+          "id": "LEUY8oluyh4wqlEd",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Microsoft Outlook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "4091e046-6d6d-4fb2-a5f5-ecefdb590805",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "adae6f7db5fa343922273bc9c042650cf85baff472b631001757a86c4489727f"
+  },
+  "nodeGroups": [],
+  "id": "9poOE7HPcHV0VNL1",
+  "tags": []
+}
