@@ -84,14 +84,14 @@
           "value": "1qRXZTgr7-sS1W641Gexeqmhzml9t7sQAbsmpHFDz9ps",
           "mode": "list",
           "cachedResultName": "Jarvis Cafe Master",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qRXZTgr7-sS1W641Gexeqmhzml9t7sQAbsmpHFDz9ps/edit?usp=drivesdk"
+          "cachedResultUrl": "//Your Master Google Sheet URL"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Inventory Details",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qRXZTgr7-sS1W641Gexeqmhzml9t7sQAbsmpHFDz9ps/edit#gid=0"
+          "cachedResultUrl": "//Your Inventory Details sheet URL"
         },
         "options": {}
       },
@@ -118,14 +118,14 @@
           "value": "1qRXZTgr7-sS1W641Gexeqmhzml9t7sQAbsmpHFDz9ps",
           "mode": "list",
           "cachedResultName": "Jarvis Cafe Master",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qRXZTgr7-sS1W641Gexeqmhzml9t7sQAbsmpHFDz9ps/edit?usp=drivesdk"
+          "cachedResultUrl": "//Your Master Google Sheet URL"
         },
         "sheetName": {
           "__rl": true,
           "value": 2087543333,
           "mode": "list",
           "cachedResultName": "Order Details",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qRXZTgr7-sS1W641Gexeqmhzml9t7sQAbsmpHFDz9ps/edit#gid=2087543333"
+          "cachedResultUrl": "//Your Order details sheet URL"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -215,7 +215,7 @@
       "name": "Place Order",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "dxvzLqQJKOm93MZV",
+          "id": "//your google sheet API Value",
           "name": "Google Sheets account"
         }
       }
