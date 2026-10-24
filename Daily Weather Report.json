@@ -1,0 +1,160 @@
+{
+  "name": "Daily Weather Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "92b82f75-d4da-4155-a3b3-b95470b25de3",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=17.6868&longitude=83.2185&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&timezone=Asia%2FKolkata",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f2ef3add-e960-42dc-bee4-4fc32bf4a6bf",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e7d1ca1e-82ab-4a06-abf0-205da300b185",
+              "name": "City",
+              "value": "Visakhapatnam",
+              "type": "string"
+            },
+            {
+              "id": "4bd37bb6-c565-4891-ae9f-442c2a870c59",
+              "name": "Humidity",
+              "value": "={{ $json.current.relative_humidity_2m }}",
+              "type": "string"
+            },
+            {
+              "id": "20990591-c5c3-49c9-875d-8223a3bd9f26",
+              "name": "Temperature",
+              "value": "={{ $json.current.temperature_2m }}",
+              "type": "string"
+            },
+            {
+              "id": "26af165d-00dc-4c8b-9a84-43cfff51f9d7",
+              "name": "Feels like",
+              "value": "={{ $json.current.apparent_temperature }}",
+              "type": "number"
+            },
+            {
+              "id": "7e57bf96-4bc8-4321-9651-ebb550181621",
+              "name": "Wind Speed",
+              "value": "={{ $json.current.wind_speed_10m }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "2bf4aa51-6a56-4ce7-9c1f-f1f48725b73b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.textbee.dev/api/v1/gateway/send-sms",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "txb_PF4lSj6WprAn37qYwLIN5ki2ZJEy87lN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    recipients: [\n      \"+919948613874\",\n      \"+918885511934\",\n      \"+919553515676\",\n    ],\n    deviceId: \"6acdc57474e21da91a318573\",\n    message: `Good morning!\n\nDaily Weather Report - ${$json.City}\n\nTemperature: ${$json.Temperature} °C\nFeels like: ${$json['Feels like']} °C\nHumidity: ${$json.Humidity}%\nWind Speed: ${$json['Wind Speed']} km/h\n\nHave a great day!`\n  }\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        672,
+        0
+      ],
+      "id": "7358e5fa-881b-4af0-b053-05a0562cf9dc",
+      "name": "HTTP Request1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f24a9664-bd75-42f1-b189-9b0a4b89fb3f",
+  "meta": {
+    "instanceId": "adae6f7db5fa343922273bc9c042650cf85baff472b631001757a86c4489727f"
+  },
+  "nodeGroups": [],
+  "id": "CbU9rYGB0URulpvu",
+  "tags": []
+}
