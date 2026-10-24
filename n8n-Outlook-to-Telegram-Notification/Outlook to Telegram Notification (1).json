@@ -40,7 +40,7 @@
       "name": "Microsoft Outlook Trigger",
       "credentials": {
         "microsoftOutlookOAuth2Api": {
-          "id": "bF4PCvrnptx3aILU",
+          "id": "Your Outlook API Id",
           "name": "Microsoft Outlook account"
         }
       }
@@ -62,7 +62,7 @@
       "webhookId": "d35dbfa1-7c0f-4710-80e2-a457a9e74140",
       "credentials": {
         "telegramApi": {
-          "id": "LEUY8oluyh4wqlEd",
+          "id": "//Your Telegram API Id",
           "name": "Telegram account"
         }
       }
