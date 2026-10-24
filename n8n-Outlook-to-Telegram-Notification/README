@@ -1,0 +1,158 @@
+Outlook to Telegram Notification 📧➡️💬
+
+An n8n automation that monitors Microsoft Outlook for new emails and sends a notification to Telegram. The workflow checks Outlook every minute, collects selected email details, and sends a formatted message to a configured Telegram chat.
+
+✨ Features
+- Automatic email monitoring: Polls Microsoft Outlook every
+  minute.
+- Email summaries: Includes sender, recipient, subject, body
+  preview, and attachment status.
+- Telegram notifications: Sends the email summary to a configured
+  Telegram chat.
+- Attachment awareness: Requests attachment downloads and reports
+  whether the email has attachments.
+- Low-code workflow: Connects Outlook and Telegram using n8n
+  nodes.
+
+🔄 Workflow
+```mermaid
+flowchart LR
+    A[Microsoft Outlook Trigger<br/>Poll every minute] --> B[Send a text message<br/>Telegram]
+    B --> C[Telegram chat receives<br/>email notification]
+```
+
+🧩 How It Works
+1. Microsoft Outlook Trigger
+The Outlook trigger polls for email updates every minute. It is configured to output selected fields:
+    - Sender (from)
+    - To recipients (toRecipients)
+    - CC recipients (ccRecipients)
+    - Subject
+    - Body preview
+    - Received date and time
+    - Importance
+    - Attachment status (hasAttachments)
+    The trigger is also configured with a specific Outlook folder filter and has attachment downloading enabled.
+2. Send a Text Message
+When the trigger emits an email, the Telegram node sends a message containing:
+    From : <sender name>
+    To : <first recipient name>
+    Subject : <email subject>
+    Body : <email body preview>
+    Attachments: <true/false>
+The actual values are populated from the Outlook trigger output. The workflow uses the first item in toRecipients for the displayed recipient name.
+
+🧰 Requirements
+- An n8n instance (cloud or self-hosted).
+- A Microsoft Outlook account connected to n8n using OAuth2.
+- A Telegram bot and Telegram API credentials configured in n8n.
+- The Telegram chat ID where notifications should be delivered.
+- Appropriate Outlook permissions to access the folder being
+  monitored.
+
+🚀 Setup and Installation
+1. Import the Workflow
+      1. Download Outlook to Telegram Notification (1).json from this
+         repository.
+      2. Open your n8n instance.
+      3. Create or open a workflow and select Import from File (the
+         wording may vary by n8n version).
+      4. Select the downloaded JSON file.
+2. Connect Microsoft Outlook
+      1. Open the Microsoft Outlook Trigger node.
+      2. Select or create the appropriate Microsoft Outlook OAuth2
+         credential.
+      3. Confirm that the connected account can access the folder you want to
+         monitor.
+      4. Review the folder filter after import. Folder identifiers can be
+         specific to an Outlook mailbox and may need to be selected again in
+         your environment.
+3. Configure Telegram
+      1. Create a Telegram bot through Telegram's official BotFather if you
+         do not already have one.
+      2. Add the bot to the target chat or group and ensure it has permission
+         to send messages.
+      3. Create/select the Telegram API credential in n8n.
+      4. Open the Send a text message node and set the correct
+         destination chat ID.
+      5. Send a test message to verify the connection. Keep bot tokens and other credentials private. Use n8n credentials rather than placing secrets directly in workflow parameters.
+4. Test the Workflow
+      1. Execute or test the workflow in n8n.
+      2. Send or receive a test email in the monitored Outlook folder.
+      3. Check that the trigger returns the expected fields.
+      4. Verify that Telegram receives a message with the sender, recipient,
+         subject, body preview, and attachment status.
+5. Once the workflow behaves as expected, activate it.
+⚙️ Configuration Notes
+- Polling interval: The workflow is configured to check every
+  minute.
+- Folder filter: The workflow export contains a specific Outlook
+  folder identifier. Review it after importing; it may not match
+  another mailbox.
+- Body content: The Telegram message uses bodyPreview, not the
+  complete email body.
+- Recipient display: Only the first toRecipients entry is shown.
+- Attachments: The workflow requests attachment downloading and
+  reports hasAttachments, but it does not send the attachment
+  files to Telegram.
+- CC and received time: These fields are selected by the Outlook
+  trigger but are not currently included in the Telegram message.
+- Importance: The importance field is selected but is not
+  currently included in the Telegram message.
+
+
+🛠️ Troubleshooting
+- No notifications arrive: Confirm that the workflow is active,
+  the Outlook credential is valid, and the monitored folder contains
+  new email activity.
+- Wrong folder is monitored: Reconfigure the Outlook folder filter
+  in the trigger node for your mailbox.
+- Telegram send fails: Verify the Telegram credential, chat ID,
+  bot access to the target chat, and the node's execution error.
+- Missing recipient or sender details: Inspect the trigger output
+  and confirm the email contains the expected from and
+  toRecipients fields.
+- Body preview is incomplete: This workflow sends the preview
+  field only; change the workflow if you need the full message body.
+- Attachments are not delivered: Attachment downloading is enabled
+  in the Outlook trigger, but there is no attachment-upload step in
+  the current workflow.
+
+📁 Repository Structure
+outlook-to-telegram-notification/
+├── README.md
+└── Outlook to Telegram Notification (1).json
+- README.md --- Project documentation and setup instructions.
+- Outlook to Telegram Notification (1).json --- Exported n8n
+  workflow.
+
+💡 Possible Improvements
+- Include the received date/time and importance in the Telegram
+  notification.
+- Include CC recipients where useful.
+- Add a link to open the email in Outlook, if a suitable message
+  identifier and URL are available.
+- Add filtering so only important or selected-sender emails trigger
+  notifications.
+- Send attachments to Telegram when present.
+- Add error handling and notifications for failed executions.
+- Make the destination chat and monitored folder easier to configure
+  after import.
+
+🔐 Security Checklist
+Before publishing this workflow in a public repository:
+- [ ] Confirm the export contains no access tokens, bot tokens, or
+  other credentials.
+- [ ] Review chat IDs, folder identifiers, email addresses, and other
+  environment-specific details before sharing.
+- [ ] Do not commit secrets to GitHub; use n8n credentials for
+  authentication.
+- [ ] If a token has been exposed, revoke or rotate it.
+- [ ] Test with a non-sensitive email and a private Telegram chat
+  before production use.
+
+
+📄 License
+Choose a license before distributing this project. If you want others to
+reuse and modify it, consider adding a LICENSE file that matches your
+intentions.
