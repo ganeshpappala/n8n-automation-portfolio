@@ -1,6 +1,8 @@
 Jarvis Cafe Bot
-An AI-powered cafe assistant built with n8n, OpenAI (gpt-5-mini), and Google Sheets. The project combines a chat-facing main workflow with an Ordering Agent subworkflow to handle inventory questions and order placement.
-
+An AI-powered cafe assistant built with n8n, OpenAI
+(gpt-5-mini), and Google Sheets. The project combines a
+chat-facing main workflow with an Ordering Agent subworkflow to handle
+inventory questions and order placement.
 Project overview
 Jarvis Cafe Bot consists of two connected n8n workflows:
 1. Jarvis Cafe Bot (main workflow) --- receives messages from the
@@ -8,8 +10,9 @@ Jarvis Cafe Bot consists of two connected n8n workflows:
    the Ordering Agent subworkflow.
 2. Ordering Agent (subworkflow) --- receives the request, looks up
    inventory information or appends an order to Google Sheets.
-Both workflow JSON files are required for the complete functionality. The main workflow references the subworkflow; it does not contain the subworkflow's internal nodes.
-
+Both workflow JSON files are required for the complete functionality.
+The main workflow references the subworkflow; it does not contain the
+subworkflow's internal nodes.
 Features
 - Responds to messages through the n8n chat trigger.
 - Uses OpenAI gpt-5-mini in both workflows.
@@ -25,53 +28,90 @@ Features
 - Generates an order ID and appends order details to the
   Order Details worksheet.
 - Is instructed to add ₹40 for door delivery.
+Important billing note: The subworkflow's current Google Sheets
+append mapping includes Name, OrderItem, Quantity,
+Contact Number, Order Id, and Delivery Method. It does not
+explicitly map a total-bill field. The prompt mentions adding ₹40 for
+door delivery, but the exported mapping alone does not confirm that a
+calculated total is stored. Verify the calculation and sheet schema
+before using this workflow for live orders.
 
-Important billing note: The subworkflow's current Google Sheets append mapping includes Name, OrderItem, Quantity,Contact Number, Order Id, and Delivery Method. It does not explicitly map a total-bill field. The prompt mentions adding ₹40 for door delivery, but the exported mapping alone does not confirm that a calculated total is stored. Verify the calculation and sheet schema before using this workflow for live orders.
-
+Architecture
+```mermaid
+flowchart TD
+    A[User sends chat message] --> B[Chat Trigger]
+    B --> C[Main AI Agent]
+    D[OpenAI Chat Model: gpt-5-mini] --- C
+    E[Simple Memory: 10-message context] --- C
+    C --> F[Ordering Agent subworkflow]
+    F --> G[Inventory Agent trigger: query input]
+    G --> H[Subworkflow AI Agent]
+    I[OpenAI Chat Model: gpt-5-mini] --- H
+    J[Simple Memory] --- H
+    H --> K[Get Inventory Details]
+    H --> L[Place Order]
+    K --> M[(Google Sheets: Inventory Details)]
+    L --> N[(Google Sheets: Order Details)]
+```
 Workflow details
 1. Main workflow --- Jarvis Cafe Bot
 The main workflow is the user-facing entry point.
   Node                                Purpose
-  When chat message received        Receives messages from the n8n chat interface.
+  When chat message received        Receives messages from the n8n chat
+                                      interface.
 
-  AI Agent                          Interprets the user's request and coordinates the task.
+  AI Agent                          Interprets the user's request and
+                                      coordinates the task.
 
-  OpenAI Chat Model                 Provides the gpt-5-mini language model.
+  OpenAI Chat Model                 Provides the gpt-5-mini language
+                                      model.
 
   Simple Memory                     Keeps a 10-message context window.
 
-  Ordering Agent                    Calls the subworkflow and passes a query input.
-
-The main agent's system message describes the Ordering Agent as the subworkflow for retrieving inventory details and placing orders.
-
+  Ordering Agent                    Calls the subworkflow and passes a
+                                  query input.
+The main agent's system message describes the Ordering Agent as the
+subworkflow for retrieving inventory details and placing orders.
 2. Subworkflow --- Ordering Agent
-The subworkflow starts with an Execute Workflow Trigger named Ordering Agent. It accepts a query string from the main workflow and uses its own AI Agent and Google Sheets tools.
+The subworkflow starts with an Execute Workflow Trigger named
+Inventory Agent. It accepts a query string from the main workflow
+and uses its own AI Agent and Google Sheets tools.
   Node                                Purpose
-  Inventory Agent                   Receives the query input from the parent workflow.
+  Inventory Agent                   Receives the query input from the
+                                      parent workflow.
 
-  AI Agent                          Interprets the query and chooses the relevant tool.
+  AI Agent                          Interprets the query and chooses
+                                      the relevant tool.
 
-  OpenAI Chat Model                 Provides the gpt-5-mini language model.
+  OpenAI Chat Model                 Provides the gpt-5-mini language
+                                      model.
 
-  Simple Memory                     Uses the incoming query as its custom session key.
+  Simple Memory                     Uses the incoming query as its
+                                      custom session key.
 
-  Get Inventory Details             Reads data from the Inventory Details worksheet.
+  Get Inventory Details             Reads data from the
+                                      Inventory Details worksheet.
 
-  Place Order                       Appends the configured order fields to the Order Details worksheet.
-
+  Place Order                       Appends the configured order fields
+                                  to the Order Details worksheet.
 Inventory requests
-The agent is instructed to read from the Inventory Details worksheet in the Jarvis Cafe Master spreadsheet and show only item names and prices---not stock values.
+The agent is instructed to read from the Inventory Details worksheet
+in the Jarvis Cafe Master spreadsheet and show only item names and
+prices---not stock values.
 
 Example: - "Show me the cafe menu and prices." - "What is the price of
 \(item\)?"
 Order requests
-When placing an order, the agent is instructed to request any missing details:
+When placing an order, the agent is instructed to request any missing
+details:
 - Customer name
 - Order item
 - Quantity
 - Contact number
 - Delivery method (Pick Up or Door Delivery)
-The agent is instructed not to ask for a payment method. It should generate a unique order ID and append the order to the Order Details worksheet.
+The agent is instructed not to ask for a payment method. It should
+generate a unique order ID and append the order to the Order Details
+worksheet.
 
 Example: - "I'd like to order two coffees." - "Place an order for
 \(item\), quantity \(number\), for pickup." - "I need door delivery for
@@ -79,8 +119,10 @@ Example: - "I'd like to order two coffees." - "Place an order for
 
 The agent may ask follow-up questions when required details are missing.
 Google Sheets setup
-The workflows reference a spreadsheet named Jarvis Cafe Master with these worksheets:
-- Inventory Details --- inventory information used to answer item and price questions.
+The workflows reference a spreadsheet named Jarvis Cafe Master
+with these worksheets:
+- Inventory Details --- inventory information used to answer
+  item and price questions.
 - Order Details --- destination for newly placed orders.
 The current Place Order node maps these fields:
 - Name
@@ -89,9 +131,10 @@ The current Place Order node maps these fields:
 - Contact Number
 - Order Id
 - Delivery Method
-Make sure the worksheet headers match the configured mappings. If you want to store the order total, add an appropriate column and configure the workflow to calculate and write that value. Confirm that the ₹40 door-delivery fee is correctly applied in the actual order calculation.
-
-
+Make sure the worksheet headers match the configured mappings. If you
+want to store the order total, add an appropriate column and configure
+the workflow to calculate and write that value. Confirm that the ₹40
+door-delivery fee is correctly applied in the actual order calculation.
 Requirements
 - An n8n instance with the required Chat Trigger, AI Agent, Simple
   Memory, OpenAI Chat Model, Execute Workflow Trigger, and Google
@@ -104,8 +147,6 @@ Requirements
 - Both workflow JSON exports:
   - Jarvis Cafe Bot.json
   - Ordering Agent.json
-
-
 Installation and configuration
 1. Import the subworkflow first. Import Ordering Agent.json into
    n8n.
@@ -130,7 +171,15 @@ Installation and configuration
 10. Enable for real use only after validation. Use sample data
     during testing and verify the full flow before accepting live
     orders.
-
+Repository structure
+Keep the two workflow exports and this README in the same GitHub
+repository:
+Jarvis-Cafe-Bot/
+├── README.md
+├── Jarvis Cafe Bot.json
+└── Ordering Agent.json
+Name this combined documentation file README.md so GitHub displays it
+on the repository home page.
 Import and export notes
 - The main workflow and subworkflow are separate n8n workflows. Export
   each one as its own JSON file.
@@ -143,8 +192,6 @@ Import and export notes
 - The workflows reference a Google spreadsheet named
   Jarvis Cafe Master; confirm that the destination Google account
   has access to the intended spreadsheet.
-
-
 Security and privacy
 - Customer names and contact numbers may be written to Google Sheets.
   Limit spreadsheet and workflow access to authorized users.
@@ -155,8 +202,6 @@ Security and privacy
   environment-specific information. Replace or remove details you do
   not want to make public.
 - Use test data while validating the workflows.
-
-
 Troubleshooting
   Problem                             What to check
   Main agent cannot call the          Open the Ordering Agent tool node
@@ -187,7 +232,6 @@ Troubleshooting
                                       total needs to be saved. The
                                       current exported mapping does not
                                   include a total field.
-
 License
 Add a LICENSE file and specify the terms under which you want to
 distribute this project before publishing it for reuse.
